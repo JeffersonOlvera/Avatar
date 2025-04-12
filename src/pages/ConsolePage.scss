@@ -1,0 +1,629 @@
+[data-component="ConsolePage"] {
+  font-family: "Arial", "Poppins", Roboto, monospace;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin: 0px 0px;
+
+  back & > div {
+    flex-shrink: 0;
+  }
+
+  @keyframes spin-slow {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(180deg);
+    }
+  }
+
+  .animate-spin-slow {
+    animation: spin-slow 2s linear infinite;
+  }
+
+  .spacer {
+    flex-grow: 1;
+  }
+
+  .content-top {
+    display: flex;
+    align-items: center;
+    padding: 8px 0px;
+    min-height: 40px;
+
+    .content-title {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      img {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+
+  .content-block-experience {
+    width: 100vw;
+    /* Ajusta el ancho */
+    height: 100vh;
+    /* Ajusta la altura */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .ConversationFlow {
+    position: absolute;
+    bottom: 0;
+    /* Posiciona el ConversationFlow en la parte inferior */
+    width: 100%;
+    /* O ajusta el ancho según necesites */
+    z-index: 10;
+    /* Asegúrate de que esté encima de otros elementos */
+  }
+
+  .Experience {
+    position: relative;
+    /* Si necesitas que esté en un flujo normal dentro de su contenedor */
+    z-index: 5;
+    /* Asegúrate de que no se sobreponga al ConversationFlow */
+  }
+
+  .OrbContainer {
+    display: flex;
+    position: relative;
+  }
+
+  .content-main {
+    flex-grow: 1;
+    flex-shrink: 1 !important;
+    margin: 0px 0px;
+    display: flex;
+    overflow: hidden;
+    //margin-bottom: 24px;
+    height: 80%;
+
+    .content-block {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+
+      .content-block-title {
+        flex-shrink: 0;
+        padding-top: 16px;
+        padding-top: 16px;
+        padding-bottom: 4px;
+        position: relative;
+      }
+
+      .content-block-body {
+        color: #6e6e7f;
+        position: relative;
+        bottom: 0;
+        flex-grow: 1;
+        line-height: 1.2em;
+        width: 100%;
+
+        overflow: auto;
+
+        &.full {
+          padding: 0px;
+        }
+      }
+    }
+
+    .content-right {
+      width: 300px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      margin-left: 24px;
+      gap: 24px;
+
+      & > div {
+        border-radius: 16px;
+        flex-grow: 1;
+        flex-shrink: 0;
+        overflow: hidden;
+        position: relative;
+
+        .content-block-title {
+          position: absolute;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 2em;
+          top: 16px;
+          left: 16px;
+          padding: 4px 16px;
+          background-color: #fff;
+          border-radius: 1000px;
+          min-height: 32px;
+          z-index: 9999;
+          text-align: center;
+          white-space: pre;
+
+          &.bottom {
+            top: auto;
+            bottom: 16px;
+            right: 16px;
+          }
+        }
+      }
+
+      & > div.kv {
+        height: 250px;
+        max-height: 250px;
+        white-space: pre;
+        background-color: #ececf1;
+
+        .content-block-body {
+          padding: 16px;
+          margin-top: 56px;
+        }
+      }
+    }
+
+    .content-logs {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+
+      & > div {
+        flex-grow: 1;
+      }
+
+      & > .content-actions {
+        flex-grow: 0;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+      }
+
+      & > div.events {
+        overflow: hidden;
+      }
+
+      .events {
+        border-top: 1px solid #e7e7e7;
+        align-items: center;
+      }
+
+      .conversation {
+        display: flex;
+        bottom: 0;
+        flex-shrink: 0;
+        width: 100%;
+        overflow: hidden;
+        height: 100px;
+        min-height: 0;
+        max-height: 100px;
+      }
+    }
+  }
+
+  .conversation-item {
+    display: flex;
+    bottom: 0;
+    flex-direction: column;
+    /* Asegura que el contenido esté en columna */
+    justify-content: center;
+    /* Centra verticalmente */
+    align-items: center;
+    /* Centra horizontalmente */
+    position: relative;
+
+    &:not(:hover) .close {
+      display: none;
+    }
+
+    .close {
+      position: absolute;
+      top: 0px;
+      right: -20px;
+      background: #aaa;
+      color: #fff;
+      display: flex;
+      border-radius: 16px;
+      padding: 2px;
+      cursor: pointer;
+
+      &:hover {
+        background: #696969;
+      }
+
+      svg {
+        stroke-width: 3;
+        width: 12px;
+        height: 12px;
+      }
+    }
+
+    .speaker {
+      position: relative;
+      bottom: 0px;
+      text-align: left;
+      gap: 16px;
+      width: 80px;
+      flex-shrink: 0;
+      margin-right: 16px;
+
+      &.user {
+        color: #0099ff;
+      }
+
+      &.assistant {
+        color: #009900;
+      }
+    }
+
+    .speaker-content {
+      color: #ffffff;
+      bottom: 0;
+      overflow: auto;
+      display: flex;
+      justify-content: center;
+      /* Centra horizontalmente */
+      align-items: center;
+      /* Centra verticalmente */
+      text-align: center;
+      /* Alinea el texto al centro */
+      word-wrap: break-word;
+      /* Ajusta las líneas si el texto es largo */
+      max-width: 80%;
+      /* Opcional: limita el ancho del texto */
+      margin: auto;
+      /* Centra el contenido dentro del contenedor */
+      background-color: #979e9f;
+      /* Fondo negro */
+    }
+  }
+
+  .event {
+    border-radius: 3px;
+    white-space: pre;
+    display: flex;
+    padding: 0px;
+    gap: 16px;
+
+    .event-timestamp {
+      text-align: left;
+      gap: 8px;
+      padding: 4px 0px;
+      width: 80px;
+      flex-shrink: 0;
+      margin-right: 16px;
+    }
+
+    .event-details {
+      display: flex;
+      flex-direction: column;
+      color: #18181b;
+      gap: 8px;
+
+      .event-summary {
+        padding: 4px 8px;
+        margin: 0px -8px;
+
+        &:hover {
+          border-radius: 8px;
+          background-color: #f0f0f0;
+        }
+
+        cursor: pointer;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+
+        .event-source {
+          flex-shrink: 0;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          &.client {
+            color: #0099ff;
+          }
+
+          &.server {
+            color: #009900;
+          }
+
+          &.error {
+            color: #990000;
+          }
+
+          svg {
+            stroke-width: 3;
+            width: 12px;
+            height: 12px;
+          }
+        }
+      }
+    }
+  }
+
+  .visualization-entry {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 40px;
+    width: 100px;
+    gap: 4px;
+  }
+
+  .visualization-entry.client {
+    color: #0099ff;
+    /* Blue color for client */
+  }
+
+  .visualization-entry.server {
+    color: #009900;
+    /* Green color for server */
+  }
+
+  canvas {
+    width: 100%;
+    height: 100%;
+    color: currentColor;
+  }
+
+  .visualization {
+    position: absolute;
+    bottom: 0px;
+    left: 50%;
+    /* Center horizontally */
+    transform: translateX(-50%);
+    /* Adjust to the center */
+    padding: 0;
+    border-radius: 16px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    /* Center the content inside */
+    align-items: center;
+    /* Center vertically */
+    width: 80%;
+    gap: 12px;
+  }
+
+  .visualization-server {
+    position: absolute;
+    top: 50%;
+    /* Center vertically on the screen */
+    right: 0;
+    /* Place it on the right edge */
+    transform: translateY(-50%);
+    /* Adjust vertically to center */
+    padding: 4px;
+    border-radius: 16px;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    /* Center the content inside */
+    align-items: center;
+    /* Center vertically */
+    gap: 4px;
+    flex-direction: column;
+  }
+
+  .content-actions {
+    display: flex;
+    flex-direction: row;
+    /* Arrange buttons horizontally */
+    gap: 16px;
+    /* Space between buttons */
+    align-items: center;
+    /* Center vertically within the content */
+    justify-content: center;
+    /* Ensure buttons are centered */
+  }
+
+  .spacer {
+    height: 10px;
+    /* Adjust spacing between elements */
+  }
+
+  /* Center the "Presiona para hablar" button */
+
+  /* Button Styles */
+  .custom-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    //width: 100px;
+    //ubicacion automatica
+    left: 50%;
+    /* Center horizontally */
+    top: 50%;
+    /* Center vertically */
+    width: 10vw;
+    height: 10vw;
+    //height: 100px;
+    //padding: 8px 16px;
+    gap: 8px;
+    /* Add space between the icon and the label */
+    padding: 0;
+    //font-size: 31px;
+    font-size: 3vw;
+    border: 2px solid #ffffff;
+
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    //text-align: center;
+
+    /* Prevent the button from being too small on narrow screens */
+    min-width: 80px;
+    /* Set a minimum width */
+    min-height: 80px;
+    /* Set a minimum height */
+    max-width: 120px;
+    /* Set a maximum width */
+    max-height: 120px;
+    /* Set a maximum height */
+  }
+
+  .custom-button .icon {
+    background: transparent;
+    /* Remove background color */
+    color: inherit;
+    /* Inherit the button text color */
+    font-size: clamp(24px, 4vw, 48px);
+    /* Icon size with a minimum and maximum size */
+    //font-size: 4vw; /* Set the icon size */
+    //font-size: 48px; /* Set the icon size */
+    margin: 0;
+    /* Remove any margin */
+    padding: 0;
+    /* Remove any padding */
+    line-height: 1;
+    /* Remove extra line-height */
+  }
+
+  .custom-button .label {
+    //font-size: 12px; /* Adjust label size to be smaller */
+    line-height: 1.2;
+    /* Tweak line height for better appearance */
+    font-size: clamp(10px, 1.5vw, 18px);
+    /* Label size with a minimum and maximum size */
+  }
+
+  /* Connected State (Background Red) */
+  .custom-button.connected {
+    background-color: #da1c1c;
+    transform: scale(0.95);
+    /* Slight shrink on press */
+    color: white;
+  }
+
+  /* Disconnected State (Lighter Red) */
+  .custom-button.disconnected {
+    background-color: #da1c1c;
+    color: white;
+  }
+
+  /* Hover effects */
+  .custom-button.connected:hover {
+    background-color: #da3c3c;
+  }
+
+  .custom-button.disconnected:hover {
+    background-color: #ffb3b3;
+  }
+
+  .custom-button.recording {
+    background-color: red;
+    color: white;
+  }
+
+  .custom-button.locked {
+    background-color: green;
+    color: white;
+  }
+
+  .recording-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  /* Static vertical bar */
+  .slide-up-bar {
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 100px;
+    background: linear-gradient(to top, #fff, #ccc);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    transition: all 0.5s ease;
+    /* Smooth transition */
+  }
+
+  .slide-up-bar.locked {
+    width: 60px;
+    height: 60px;
+    background: #4caf50;
+    /* Green background when locked */
+    border-radius: 50%;
+    /* Fully round */
+    justify-content: center;
+    /* Center lock icon */
+  }
+
+  /* Base styling for the lock icon */
+  .lock-icon {
+    font-size: 16px;
+    transition: opacity 0.5s ease;
+    /* Smooth transition for opacity */
+    display: inline-block;
+  }
+
+  /* Animation for unlocking */
+  .lock-icon.unlocking {
+    opacity: 0;
+  }
+
+  /* Transition when locked */
+  .lock-icon.locked {
+    opacity: 1;
+  }
+
+  .slide-up-bar.locked .lock-icon {
+    color: #fff;
+    /* Change to white when locked */
+  }
+
+  .moving-arrow {
+    font-size: 20px;
+    color: #000000;
+    font-weight: bold;
+    /* Optional, reinforces the bold appearance */
+    animation: moveArrowUp 1.5s infinite;
+    opacity: 1;
+  }
+
+  .slide-up-bar.locked .moving-arrow {
+    display: none;
+    /* Hide arrow when locked */
+  }
+
+  /* Arrow animation */
+  @keyframes moveArrowUp {
+    0% {
+      transform: translateY(30px);
+      opacity: 0;
+    }
+
+    50% {
+      transform: translateY(0px);
+      opacity: 1;
+    }
+
+    100% {
+      transform: translateY(-5px);
+      opacity: 0;
+    }
+  }
+}

@@ -2,14 +2,14 @@ $primary-bg: black;
 $glass-bg: rgba(255, 255, 255, 0.2);
 $border-color: rgba(177, 176, 176, 0.3);
 $button-hover: rgba(255, 255, 255, 0.5);
-$color-text: rgb(30 23 23);
+$color-text: rgb(30, 23, 23);
 $color-text-title: white;
 $color-bg: rgba(150, 35, 35, 0.928);
 $color-btn: white;
 $border-color-btn: rgba(192, 48, 48, 0.767);
 $hover-btn: rgb(128, 17, 17);
 $color-text-btn: rgb(253, 248, 248);
-$color-bg-input: rgb(30 41 59 / 0.6);
+$color-bg-input: rgb(235, 236, 240);
 
 body {
   font-family: "Arial", "Poppins", sans-serif;
@@ -26,28 +26,56 @@ body {
   max-width: 400px;
   padding: 14px;
   position: absolute;
-  bottom: 4px; // Mantiene un pequeño margen respecto al fondo
+  bottom: 4px;
   left: 50%;
-  transform: translateX(-50%); // Centra horizontalmente
+  transform: translateX(-50%);
+  z-index: 10;
+
+  // Responsive para totem
+  @media (min-width: 1024px) and (min-height: 600px) {
+    max-width: 450px;
+    bottom: 10px;
+  }
+
+  // Responsive para celulares pequeños
+  @media (max-width: 320px) {
+    max-width: 300px;
+    padding: 10px;
+  }
 }
 
 .glass-card {
-  //background: $glass-bg;
   border-radius: 16px;
   padding: 20px;
   text-align: center;
   border: 2px solid $border-color;
-  //background-color: rgba(13, 13, 13, 0.928);
   background-color: $color-bg;
-
   box-shadow: rgba(20, 0, 0, 0.25) 0px 30px 60px -12px inset,
     rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
 
+  // Responsive para totem
+  @media (min-width: 1024px) and (min-height: 600px) {
+    padding: 25px;
+    border-radius: 20px;
+  }
+
+  // Responsive para celulares pequeños
+  @media (max-width: 320px) {
+    padding: 15px;
+    border-radius: 12px;
+  }
+
   h3 {
     color: $color-text-title;
-    font-size: 0.9rem;
+    font-size: 1.4rem;
     font-weight: 600;
     margin-bottom: 15px;
+
+    // Responsive para totem
+    @media (min-width: 1024px) and (min-height: 600px) {
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+    }
   }
 
   .input-group {
@@ -55,10 +83,10 @@ body {
     flex-direction: column;
     gap: 10px;
 
-    .input-group input,
-    .input-group button {
-      width: 100%; // Ambos elementos tendrán el mismo ancho
-      box-sizing: border-box; // Evita que padding y border afecten el tamaño real
+    input,
+    button {
+      width: 100%;
+      box-sizing: border-box;
     }
 
     input {
@@ -71,6 +99,18 @@ body {
       color: $color-text-title;
       box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
         var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+
+      // Responsive para totem
+      @media (min-width: 1024px) and (min-height: 600px) {
+        padding: 15px;
+        font-size: 18px;
+      }
+
+      // Responsive para celulares pequeños
+      @media (max-width: 320px) {
+        padding: 8px;
+        font-size: 14px;
+      }
     }
 
     button {
@@ -84,6 +124,18 @@ body {
       cursor: pointer;
       transition: 0.3s ease-in-out;
 
+      // Responsive para totem
+      @media (min-width: 1024px) and (min-height: 600px) {
+        padding: 15px;
+        font-size: 18px;
+      }
+
+      // Responsive para celulares pequeños
+      @media (max-width: 320px) {
+        padding: 8px;
+        font-size: 14px;
+      }
+
       &:hover {
         background: $button-hover;
       }
@@ -92,16 +144,28 @@ body {
 
   .options {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
     margin-top: 15px;
+
+    // Responsive para totem
+    @media (min-width: 1024px) and (min-height: 600px) {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    // Responsive para celulares pequeños
+    @media (max-width: 320px) {
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 8px;
+    }
 
     button {
       font-weight: 600;
       width: 100%;
-      height: 12vh;
-      min-width: 80px;
-      max-width: 200px;
+      height: auto;
+      min-height: 80px;
       padding: 12px;
       background: $color-btn;
       color: $color-text;
@@ -113,55 +177,31 @@ body {
       display: flex;
       justify-content: center;
       align-items: center;
-      padding-left: 10px;
-      padding-bottom: 10px;
+      text-align: center;
       text-wrap: balance;
-      box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
-        rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-        rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+      box-shadow: rgba(0, 0, 0, 0.25) 0px 20px 25px,
+        rgba(0, 0, 0, 0.12) 0px -6px 15px, rgba(0, 0, 0, 0.12) 0px 2px 3px,
+        rgba(0, 0, 0, 0.17) 0px 6px 6px, rgba(0, 0, 0, 0.09) 0px -1px 3px;
+
+      // Responsive para totem
+      @media (min-width: 1024px) and (min-height: 600px) {
+        min-height: 100px;
+        padding: 15px;
+        font-size: 0.8rem;
+        border-radius: 10px;
+      }
+
+      // Responsive para celulares pequeños
+      @media (max-width: 320px) {
+        min-height: 60px;
+        padding: 8px;
+        font-size: 0.6rem;
+      }
 
       &:hover {
         background: $button-hover;
       }
-
-      button:nth-last-child(1):nth-child(odd) {
-        grid-column: span 2;
-      }
-
-      .glass-button {
-        background: none;
-        border: none;
-        color: rgb(131, 129, 129);
-        font-size: 16px;
-        cursor: pointer;
-        transition: 0.3s ease-in-out;
-
-        &:hover {
-          color: $button-hover;
-        }
-      }
     }
-
-    .input-button > button {
-      background: black;
-      border: 2px solid white;
-      color: $color-text-title;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.3s ease-in-out;
-      box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
-        rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-        rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
-
-      &:hover {
-        color: $button-hover;
-      }
-    }
-  }
-
-  .loading {
-    color: $color-text-title;
-    margin-top: 10px;
   }
 
   .document-type-select {
@@ -171,15 +211,45 @@ body {
     border: 1px solid #ccc;
     background-color: rgba(255, 255, 255, 0.8);
     font-size: 14px;
+
+    // Responsive para totem
+    @media (min-width: 1024px) and (min-height: 600px) {
+      min-width: 140px;
+      padding: 12px 15px;
+      font-size: 16px;
+    }
+
+    // Responsive para celulares pequeños
+    @media (max-width: 320px) {
+      min-width: 100px;
+      padding: 6px 8px;
+      font-size: 12px;
+    }
+  }
+
+  .loading {
+    color: $color-text-title;
+    margin-top: 10px;
+
+    // Responsive para totem
+    @media (min-width: 1024px) and (min-height: 600px) {
+      font-size: 18px;
+    }
   }
 
   .error {
-    color: $color-text-title;
-    margin-top: 10px;
     color: $color-text;
+    margin-top: 10px;
     font-size: 10px;
     background: $color-text-btn;
     border-radius: 4px;
+    padding: 5px;
+
+    // Responsive para totem
+    @media (min-width: 1024px) and (min-height: 600px) {
+      font-size: 12px;
+      padding: 8px;
+    }
   }
 
   .turno {
@@ -187,6 +257,16 @@ body {
       color: $color-text-title;
       font-size: 18px;
       font-weight: 800;
+
+      // Responsive para totem
+      @media (min-width: 1024px) and (min-height: 600px) {
+        font-size: 24px;
+      }
+
+      // Responsive para celulares pequeños
+      @media (max-width: 320px) {
+        font-size: 16px;
+      }
     }
   }
 
@@ -198,6 +278,16 @@ body {
       font-size: 14px;
       color: $color-text-btn;
       margin-bottom: 10px;
+
+      // Responsive para totem
+      @media (min-width: 1024px) and (min-height: 600px) {
+        font-size: 16px;
+      }
+
+      // Responsive para celulares pequeños
+      @media (max-width: 320px) {
+        font-size: 12px;
+      }
     }
 
     .return-button {
@@ -210,6 +300,18 @@ body {
       font-weight: 800;
       transition: all 0.3s ease;
 
+      // Responsive para totem
+      @media (min-width: 1024px) and (min-height: 600px) {
+        padding: 10px 20px;
+        font-size: 16px;
+      }
+
+      // Responsive para celulares pequeños
+      @media (max-width: 320px) {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
       &:hover {
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -218,8 +320,7 @@ body {
   }
 }
 
-/* Add this to your Flow.scss file */
-
+/* Estilos para el modal de carga */
 .loading-modal {
   position: fixed;
   top: 0;
@@ -230,25 +331,58 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Asegura que esté por encima de otros elementos */
-}
+  z-index: 1000;
 
-.loading-content {
-  background-color: white;
-  padding: 30px;
-  border-radius: 10px;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
+  .loading-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
-.loading-spinner {
-  border: 6px solid #f3f3f3;
-  border-top: 6px solid #3498db;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 2s linear infinite;
-  margin: 0 auto 20px auto;
+    // Responsive para celulares pequeños
+    @media (max-width: 320px) {
+      padding: 20px;
+    }
+
+    .loading-spinner {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid $color-bg;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 2s linear infinite;
+      margin: 0 auto 20px auto;
+
+      // Responsive para totem
+      @media (min-width: 1024px) and (min-height: 600px) {
+        width: 70px;
+        height: 70px;
+        border-width: 8px;
+      }
+
+      // Responsive para celulares pequeños
+      @media (max-width: 320px) {
+        width: 30px;
+        height: 30px;
+        border-width: 4px;
+      }
+    }
+
+    h2 {
+      color: $color-text;
+
+      // Responsive para totem
+      @media (min-width: 1024px) and (min-height: 600px) {
+        font-size: 24px;
+      }
+
+      // Responsive para celulares pequeños
+      @media (max-width: 320px) {
+        font-size: 16px;
+      }
+    }
+  }
 }
 
 @keyframes spin {
@@ -260,8 +394,7 @@ body {
   }
 }
 
-/* Añadir a tu archivo Flow.scss */
-
+/* Mensaje de error */
 .error-message {
   display: flex;
   flex-direction: column;
@@ -269,21 +402,58 @@ body {
   justify-content: center;
   text-align: center;
   padding: 2rem;
-}
 
-.error-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-  color: #e74c3c;
-}
+  // Responsive para celulares pequeños
+  @media (max-width: 320px) {
+    padding: 1rem;
+  }
 
-.error-message h3 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #e74c3c;
-}
+  .error-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: #e74c3c;
 
-.error-message p {
-  font-size: 1rem;
-  color: #7f8c8d;
+    // Responsive para totem
+    @media (min-width: 1024px) and (min-height: 600px) {
+      font-size: 5rem;
+    }
+
+    // Responsive para celulares pequeños
+    @media (max-width: 320px) {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #e74c3c;
+
+    // Responsive para totem
+    @media (min-width: 1024px) and (min-height: 600px) {
+      font-size: 2rem;
+    }
+
+    // Responsive para celulares pequeños
+    @media (max-width: 320px) {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  p {
+    font-size: 1rem;
+    color: $color-text-btn;
+
+    // Responsive para totem
+    @media (min-width: 1024px) and (min-height: 600px) {
+      font-size: 1.2rem;
+    }
+
+    // Responsive para celulares pequeños
+    @media (max-width: 320px) {
+      font-size: 0.8rem;
+    }
+  }
 }

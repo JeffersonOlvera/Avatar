@@ -56,12 +56,6 @@ const flowData = {
                   "La cédula ingresada no es válida o no pertenece a un cliente Claro. Por favor, verifique e intente nuevamente.",
                 audio: "/audio/MEGAN-CEDULA_INVALIDA.mp3",
                 end: true,
-                options: [
-                  {
-                    label: "Volver al inicio",
-                    next: flowData,
-                  },
-                ],
               };
             }
 

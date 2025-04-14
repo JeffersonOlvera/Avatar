@@ -7,9 +7,16 @@ const DOCUMENT_TYPES = [
   { value: "Pasaporte", label: "Pasaporte" },
 ];
 
-const DocumentInput = ({ flowConfig, onSubmit, loading, error, setError }) => {
+const DocumentInput = ({
+  flowConfig,
+  onSubmit,
+  loading,
+  error,
+  setError,
+  deviceType = "desktop",
+}) => {
   const [userInput, setUserInput] = useState("");
-  const [documentType, setDocumentType] = useState("cedula");
+  const [documentType, setDocumentType] = useState("Cedula");
 
   // Usar hook personalizado para validación
   const { validateInput } = useInputValidation(flowConfig, setError);
@@ -42,12 +49,16 @@ const DocumentInput = ({ flowConfig, onSubmit, loading, error, setError }) => {
     }
   };
 
+  // Clases condicionales según el dispositivo
+  const inputGroupClasses = `input-group ${deviceType}`;
+  const selectClasses = `document-type-select ${deviceType}`;
+
   return (
-    <div className="input-group">
+    <div className={inputGroupClasses}>
       <select
         value={documentType}
         onChange={handleDocumentTypeChange}
-        className="document-type-select"
+        className={selectClasses}
         disabled={loading}
       >
         {DOCUMENT_TYPES.map((type) => (
@@ -69,7 +80,7 @@ const DocumentInput = ({ flowConfig, onSubmit, loading, error, setError }) => {
       />
 
       <button
-        className="input-button"
+        className={`input-button ${deviceType}`}
         onClick={handleSubmit}
         disabled={loading}
       >

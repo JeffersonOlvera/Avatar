@@ -1,26 +1,43 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-const ReturnSection = ({ timeout, onReturn }) => {
+const ReturnSection = ({ timeout, onReturn, deviceType = "desktop" }) => {
   const timerRef = useRef(null);
+  const [timeLeft, setTimeLeft] = useState(Math.floor(timeout / 1000));
 
   useEffect(() => {
+    // Configurar timer para actualizar la cuenta regresiva
+    const countdownTimer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(countdownTimer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
     // Configurar timer para retorno automático
     timerRef.current = setTimeout(onReturn, timeout);
 
-    // Limpiar timer al desmontar
+    // Limpiar timers al desmontar
     return () => {
+      clearInterval(countdownTimer);
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
     };
   }, [timeout, onReturn]);
 
+  // Clases condicionales según el dispositivo
+  const sectionClasses = `return-section ${deviceType}`;
+  const buttonClasses = `return-button ${deviceType}`;
+
   return (
-    <div className="return-section">
+    <div className={sectionClasses}>
       <p className="return-message">
-        Volviendo al inicio en {timeout / 1000} segundos...
+        Volviendo al inicio en {timeLeft} segundos...
       </p>
-      <button className="return-button" onClick={onReturn}>
+      <button className={buttonClasses} onClick={onReturn}>
         Volver al inicio
       </button>
     </div>

@@ -25,7 +25,7 @@ const LoadingModal = ({ isVisible }) => {
 };
 
 // Componente para el mensaje de error
-const ErrorMessage = ({ message, onReturn, timeout }) => {
+const ErrorMessage = ({ message, onReturn, timeout, deviceType }) => {
   const [timeLeft, setTimeLeft] = useState(Math.floor(timeout / 1000));
 
   useEffect(() => {
@@ -44,7 +44,7 @@ const ErrorMessage = ({ message, onReturn, timeout }) => {
   }, [onReturn, timeout]);
 
   return (
-    <div className="error-message">
+    <div className={`error-message ${deviceType}`}>
       <div className="error-icon">❌</div>
       <h3>{message}</h3>
       <p>Volviendo a la pantalla principal en {timeLeft} segundos...</p>
@@ -58,7 +58,7 @@ const RESET_TIMEOUT = 10000;
 const INACTIVITY_TIMEOUT = 60000;
 const ERROR_TIMEOUT = 5000; // Tiempo antes de volver a la pantalla principal en caso de error
 
-const ConversationFlow = ({ initialFlow, onReset }) => {
+const ConversationFlow = ({ initialFlow, onReset, deviceType = "desktop" }) => {
   // Estados básicos del componente
   const [currentFlow, setCurrentFlow] = useState(initialFlow || flowData);
   const [loading, setLoading] = useState(false);
@@ -72,7 +72,6 @@ const ConversationFlow = ({ initialFlow, onReset }) => {
 
   // Estado para almacenar la respuesta de la API y su visualización
   const [apiResponse, setApiResponse] = useState(null);
-
   const [errorAudio, setErrorAudio] = useState("/audio/ERROR_MESSAGE.mp3"); // Audio por defecto para errores
 
   // Referencias
@@ -96,9 +95,6 @@ const ConversationFlow = ({ initialFlow, onReset }) => {
   const saveAnswer = (key, value) => {
     if (!key || value === undefined) return;
     flowHandlerRef.current.answers[key] = value;
-    // console.log(`Respuesta actualizada - ${key}:`, {
-    //   ...flowHandlerRef.current.answers,
-    // });
   };
 
   // Preparar datos para la API
@@ -180,8 +176,6 @@ const ConversationFlow = ({ initialFlow, onReset }) => {
   const sendToApi = async (successFlowId = null, errorCustomAudio = null) => {
     // Preparar datos completos para la API
     const requestData = prepareApiData();
-
-    //console.log("Datos enviados a la API:", requestData);
 
     try {
       setLoading(true);
@@ -360,17 +354,22 @@ const ConversationFlow = ({ initialFlow, onReset }) => {
     }
   };
 
+  // Agregar clase según el tipo de dispositivo
+  const containerClasses = `container ${deviceType}`;
+  const glassCardClasses = `glass-card ${deviceType}`;
+
   return (
-    <div className="container">
+    <div className={containerClasses}>
       <LoadingModal isVisible={showLoadingModal} />
 
-      <div className="glass-card">
+      <div className={glassCardClasses}>
         {apiError ? (
           <>
             <ErrorMessage
               message={errorMessage}
               onReturn={returnToInitialFlow}
               timeout={ERROR_TIMEOUT}
+              deviceType={deviceType}
             />
             <AudioPlayer audioPath={errorAudio} autoPlay={true} />
           </>
@@ -397,18 +396,21 @@ const ConversationFlow = ({ initialFlow, onReset }) => {
               loading={loading}
               error={error}
               setError={setError}
+              deviceType={deviceType}
             />
 
             <OptionsSection
               options={currentFlow?.options || []}
               onOptionSelect={handleOptionSelect}
               loading={loading}
+              deviceType={deviceType}
             />
 
             {currentFlow?.end && (
               <ReturnSection
                 timeout={RESET_TIMEOUT}
                 onReturn={returnToInitialFlow}
+                deviceType={deviceType}
               />
             )}
 

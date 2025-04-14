@@ -4,13 +4,20 @@ import {
   useTexture,
   useHelper,
   Gltf,
+  Stage,
+  useAspect,
 } from "@react-three/drei";
 import { Canvas, useThree, useLoader } from "@react-three/fiber";
 import { Loader, CameraControls } from "@react-three/drei";
 import { degToRad } from "three/src/math/MathUtils";
-import { useEffect, useRef } from "react";
-import { DirectionalLightHelper, Object3D, TextureLoader } from "three";
-import { useControls, Leva, button } from "leva"; // Import Leva
+import { useEffect, useRef, useState } from "react";
+import {
+  DirectionalLightHelper,
+  Object3D,
+  TextureLoader,
+  Vector3,
+} from "three";
+import { useControls, Leva, button } from "leva";
 
 import ClaroModelo from "./Avatar";
 
@@ -59,15 +66,94 @@ const AdjustableLight = ({
   );
 };
 
-const ImagePlane = ({ position }) => {
-  //onst texture = useLoader(TextureLoader,"./textures/hotel_lobby.jpg");
+// Componente para detectar el tipo de dispositivo
+const DeviceDetector = ({ children }) => {
+  const { width } = useThree((state) => state.viewport);
+  const isMobile = width < 5; // Ajustar según necesidad (en unidades three.js)
+  const isTablet = width >= 5 && width < 10;
+  const isDesktop = width >= 10;
+
+  return children({ isMobile, isTablet, isDesktop });
+};
+
+// Componente de fondo responsivo
+const ResponsiveBackground = () => {
   const texture = useLoader(TextureLoader, "./textures/background_prueba.jpg");
+
   return (
-    <mesh position={position}>
-      <planeGeometry args={[380, 350]} />
-      <meshBasicMaterial map={texture} />
-    </mesh>
+    <DeviceDetector>
+      {({ isMobile, isTablet, isDesktop }) => {
+        // Ajustar escala y posición según el dispositivo
+        const scale = isMobile
+          ? [280, 250]
+          : isTablet
+          ? [320, 300]
+          : [380, 350];
+        const position = isMobile
+          ? [0, -10, -80]
+          : isTablet
+          ? [0, -5, -90]
+          : [0, 0, -100];
+
+        return (
+          <mesh position={position}>
+            <planeGeometry args={scale} />
+            <meshBasicMaterial map={texture} />
+          </mesh>
+        );
+      }}
+    </DeviceDetector>
   );
+};
+
+// Componente de avatar responsivo
+const ResponsiveAvatar = () => {
+  return (
+    <DeviceDetector>
+      {({ isMobile, isTablet, isDesktop }) => {
+        // Ajustar posición y escala según el dispositivo
+        const position = isMobile
+          ? [0, -130, -40] // Móvil - Más cerca y más abajo
+          : isTablet
+          ? [0, -120, -45] // Tablet
+          : [0, -115, -50]; // Desktop - Posición original
+
+        const scale = isMobile
+          ? 0.75 // Móvil - Más pequeño
+          : isTablet
+          ? 0.8 // Tablet
+          : 0.9; // Desktop - Escala original
+
+        return (
+          <ClaroModelo
+            position={position}
+            scale={scale}
+            rotation-y={degToRad(0)}
+          />
+        );
+      }}
+    </DeviceDetector>
+  );
+};
+
+// Configuración responsiva de cámara
+const ResponsiveCamera = ({ children }) => {
+  const { width } = useThree((state) => state.viewport);
+  const isMobile = width < 5;
+
+  // Configurar cámara según el dispositivo
+  useThree(({ camera }) => {
+    if (isMobile) {
+      camera.position.set(0, 4, 36); // Más cercana para móviles
+      camera.zoom = 1.0; // Menor zoom para móviles
+    } else {
+      camera.position.set(0, 4, 32); // Posición original
+      camera.zoom = 1.3; // Zoom original
+    }
+    camera.updateProjectionMatrix();
+  });
+
+  return children;
 };
 
 export const Experience = () => {
@@ -75,22 +161,20 @@ export const Experience = () => {
     <>
       <Loader hidden />
       <Leva hidden />
-      <Canvas shadows camera={{ position: [0, 4, 32], zoom: 1.3 }}>
-        {/* Orbit Controls */}
-        <OrbitControls
-          enableZoom={true}
-          enablePan={false}
-          maxPolarAngle={Math.PI / 2}
-          minPolarAngle={Math.PI / 2}
-          minAzimuthAngle={-Math.PI / 150}
-          maxAzimuthAngle={Math.PI / 150}
-          minDistance={10}
-          maxDistance={50}
-        />
-        {/*<OrbitControls/>*/}
+      <Canvas shadows>
+        <ResponsiveCamera>
+          <OrbitControls
+            enableZoom={true}
+            enablePan={false}
+            maxPolarAngle={Math.PI / 2}
+            minPolarAngle={Math.PI / 2}
+            minAzimuthAngle={-Math.PI / 150}
+            maxAzimuthAngle={Math.PI / 150}
+            minDistance={10}
+            maxDistance={50}
+          />
 
-        {/* Adjustable Lights */}
-        {
+          {/* Adjustable Lights */}
           <AdjustableLight
             lightName="Frontal"
             initialPosition={[73, 28, 10]}
@@ -99,9 +183,7 @@ export const Experience = () => {
             color="white"
             coneColor="lightblue"
           />
-        }
 
-        {
           <AdjustableLight
             lightName="Sombra"
             initialPosition={[-5, 6, 4]}
@@ -110,9 +192,7 @@ export const Experience = () => {
             color="white"
             coneColor="yellow"
           />
-        }
 
-        {
           <AdjustableLight
             lightName="Cabello"
             initialPosition={[0, 0, 0]}
@@ -121,20 +201,14 @@ export const Experience = () => {
             color="white"
             coneColor="orange"
           />
-        }
 
-        {/* Basic lighting for the model */}
-        <ambientLight intensity={0.7} />
-        {/* <color attach="background" args={["#591212"]} />
-        <directionalLight
-          position={[73, 28, 10]}
-          intensity={0.9}
-          color="white"
-          castShadow
-        /> */}
-        {/* Claro Model */}
-        <ImagePlane position={[0, 0, -100]} />
-        <ClaroModelo rotation-y={degToRad(0)} />
+          {/* Basic lighting for the model */}
+          <ambientLight intensity={0.7} />
+
+          {/* Background and Claro Model */}
+          <ResponsiveBackground />
+          <ResponsiveAvatar />
+        </ResponsiveCamera>
       </Canvas>
     </>
   );

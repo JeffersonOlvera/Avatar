@@ -1,9 +1,12 @@
 import { ConsolePage } from "./pages/Consolepage";
+import ResponsiveLayout from "./components/ResponsiveLayout/ResponsiveLayout";
 
 function App() {
   return (
     <div data-component="App">
-      <ConsolePage />
+      <ResponsiveLayout>
+        <ConsolePage />
+      </ResponsiveLayout>
     </div>
   );
 }

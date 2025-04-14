@@ -2,7 +2,14 @@ import React, { useState } from "react";
 import DocumentInput from "./DocumentInput";
 import useInputValidation from "../../hooks/useInputValidation";
 
-const InputSection = ({ currentFlow, onSubmit, loading, error, setError }) => {
+const InputSection = ({
+  currentFlow,
+  onSubmit,
+  loading,
+  error,
+  setError,
+  deviceType = "desktop",
+}) => {
   const [userInput, setUserInput] = useState("");
 
   // Usar hook personalizado para validación
@@ -29,6 +36,9 @@ const InputSection = ({ currentFlow, onSubmit, loading, error, setError }) => {
     }
   };
 
+  // Clases condicionales según el dispositivo
+  const inputGroupClasses = `input-group ${deviceType}`;
+
   // Renderizado condicional basado en el tipo de entrada
   if (currentFlow.isDocumentInput) {
     return (
@@ -38,13 +48,14 @@ const InputSection = ({ currentFlow, onSubmit, loading, error, setError }) => {
         loading={loading}
         error={error}
         setError={setError}
+        deviceType={deviceType}
       />
     );
   }
 
   // Input estándar para otros casos
   return (
-    <div className="input-group">
+    <div className={inputGroupClasses}>
       <input
         type={currentFlow.input}
         value={userInput}

@@ -96,7 +96,7 @@ body {
       outline: none;
       font-size: 16px;
       background-color: $color-bg-input;
-      color: $color-text-title;
+      color: $color-text;
       box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
         var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 
@@ -456,4 +456,66 @@ body {
       font-size: 0.8rem;
     }
   }
+}
+/* Agregar al final de Flow.scss */
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  padding: 0 10px;
+}
+
+.nav-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  background-color: #ffffff;
+  color: #242424;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  min-width: 100px;
+}
+
+.back-button {
+  background-color: #f1f1f1;
+  color: #333;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 20px 25px,
+    rgba(0, 0, 0, 0.12) 0px -6px 15px, rgba(0, 0, 0, 0.12) 0px 2px 3px,
+    rgba(0, 0, 0, 0.17) 0px 6px 6px, rgba(0, 0, 0, 0.09) 0px -1px 3px;
+}
+
+.home-button {
+  background-color: #f1f1f1;
+  color: #333;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 20px 25px,
+    rgba(0, 0, 0, 0.12) 0px -6px 15px, rgba(0, 0, 0, 0.12) 0px 2px 3px,
+    rgba(0, 0, 0, 0.17) 0px 6px 6px, rgba(0, 0, 0, 0.09) 0px -1px 3px;
+}
+
+.nav-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.back-button:hover {
+  background-color: #e0e0e0;
+}
+
+.home-button:hover {
+  background-color: #f1f1f1;
+}
+
+.nav-button:active {
+  transform: translateY(1px);
+}
+
+.nav-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }

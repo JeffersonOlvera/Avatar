@@ -8,6 +8,7 @@ import AudioPlayer from "./AudioPlayer";
 import InputSection from "./InputSection";
 import OptionsSection from "./OptionsSection";
 import ReturnSection from "./ReturnSection";
+import ConfirmationModal from "./ConfirmationModal";
 import "./Flow.scss";
 
 // Componente para el modal de carga
@@ -25,7 +26,7 @@ const LoadingModal = ({ isVisible }) => {
 };
 
 // Componente para el mensaje de error
-const ErrorMessage = ({ message, onReturn, timeout, deviceType }) => {
+const ErrorMessage = ({ message, onReturn, timeout }) => {
   const [timeLeft, setTimeLeft] = useState(Math.floor(timeout / 1000));
 
   useEffect(() => {
@@ -44,7 +45,7 @@ const ErrorMessage = ({ message, onReturn, timeout, deviceType }) => {
   }, [onReturn, timeout]);
 
   return (
-    <div className={`error-message ${deviceType}`}>
+    <div className="error-message">
       <div className="error-icon">❌</div>
       <h3>{message}</h3>
       <p>Volviendo a la pantalla principal en {timeLeft} segundos...</p>
@@ -58,7 +59,7 @@ const RESET_TIMEOUT = 10000;
 const INACTIVITY_TIMEOUT = 60000;
 const ERROR_TIMEOUT = 5000; // Tiempo antes de volver a la pantalla principal en caso de error
 
-const ConversationFlow = ({ initialFlow, onReset, deviceType = "desktop" }) => {
+const ConversationFlow = ({ initialFlow, onReset }) => {
   // Estados básicos del componente
   const [currentFlow, setCurrentFlow] = useState(initialFlow || flowData);
   const [loading, setLoading] = useState(false);
@@ -70,8 +71,16 @@ const ConversationFlow = ({ initialFlow, onReset, deviceType = "desktop" }) => {
     "Lo sentimos, ha ocurrido un error al procesar su solicitud."
   );
 
+  // Estado para almacenar el historial de navegación
+  const [navigationHistory, setNavigationHistory] = useState([]);
+
+  // Nuevo estado para el modal de confirmación
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [pendingApiRequest, setPendingApiRequest] = useState(null);
+
   // Estado para almacenar la respuesta de la API y su visualización
   const [apiResponse, setApiResponse] = useState(null);
+
   const [errorAudio, setErrorAudio] = useState("/audio/ERROR_MESSAGE.mp3"); // Audio por defecto para errores
 
   // Referencias
@@ -86,15 +95,21 @@ const ConversationFlow = ({ initialFlow, onReset, deviceType = "desktop" }) => {
   // Efecto para realizar la navegación pendiente después de cargar
   useEffect(() => {
     if (!loading && pendingNavigation && !apiError) {
+      // Guardar el flujo actual en el historial antes de navegar al siguiente
+      setNavigationHistory((prev) => [...prev, currentFlow]);
+
       navigateToFlow(pendingNavigation);
       setPendingNavigation(null);
     }
-  }, [loading, pendingNavigation, navigateToFlow, apiError]);
+  }, [loading, pendingNavigation, navigateToFlow, apiError, currentFlow]);
 
   // Función para guardar respuestas
   const saveAnswer = (key, value) => {
     if (!key || value === undefined) return;
     flowHandlerRef.current.answers[key] = value;
+    // console.log(`Respuesta actualizada - ${key}:`, {
+    //   ...flowHandlerRef.current.answers,
+    // });
   };
 
   // Preparar datos para la API
@@ -172,10 +187,68 @@ const ConversationFlow = ({ initialFlow, onReset, deviceType = "desktop" }) => {
     }
   };
 
+  // Función para abrir el modal de confirmación antes de enviar datos
+  const showConfirmation = (successFlowId, errorCustomAudio) => {
+    // Asegurarse de que tenemos los datos de celular más recientes
+    const currentAnswers = flowHandlerRef.current.answers;
+
+    // Unificar el campo de celular y notificación si uno de ellos está vacío
+    if (currentAnswers.celular && !currentAnswers.notificacion_celular) {
+      saveAnswer("notificacion_celular", currentAnswers.celular);
+    } else if (currentAnswers.notificacion_celular && !currentAnswers.celular) {
+      saveAnswer("celular", currentAnswers.notificacion_celular);
+    }
+
+    // Guardar los datos del envío pendiente
+    setPendingApiRequest({
+      successFlowId,
+      errorCustomAudio,
+    });
+
+    // Mostrar el modal de confirmación
+    setShowConfirmationModal(true);
+  };
+
+  // Función para manejar confirmación del modal
+  const handleConfirmation = (confirmedData) => {
+    // Actualizar datos con los valores editados
+    if (confirmedData.notificacion_celular) {
+      saveAnswer("notificacion_celular", confirmedData.notificacion_celular);
+      saveAnswer("celular", confirmedData.notificacion_celular);
+    }
+
+    // Asegurarnos de que la cédula esté configurada correctamente
+    if (!flowHandlerRef.current.answers.cedula && confirmedData.documentValue) {
+      saveAnswer("cedula", confirmedData.documentValue);
+    }
+
+    console.log("Datos confirmados:", flowHandlerRef.current.answers);
+
+    // Cerrar el modal
+    setShowConfirmationModal(false);
+
+    // Realizar la petición a la API con los datos actualizados
+    if (pendingApiRequest) {
+      sendToApi(
+        pendingApiRequest.successFlowId,
+        pendingApiRequest.errorCustomAudio
+      );
+      setPendingApiRequest(null);
+    }
+  };
+
+  // Función para cancelar el envío
+  const handleCancelConfirmation = () => {
+    setShowConfirmationModal(false);
+    setPendingApiRequest(null);
+  };
+
   // Función para enviar datos a la API
   const sendToApi = async (successFlowId = null, errorCustomAudio = null) => {
     // Preparar datos completos para la API
     const requestData = prepareApiData();
+
+    //console.log("Datos enviados a la API:", requestData);
 
     try {
       setLoading(true);
@@ -223,7 +296,15 @@ const ConversationFlow = ({ initialFlow, onReset, deviceType = "desktop" }) => {
 
   // Función para retornar al flujo inicial
   const returnToInitialFlow = () => {
+    // Detener cualquier audio que se esté reproduciendo
+    const audioElements = document.getElementsByTagName("audio");
+    for (let i = 0; i < audioElements.length; i++) {
+      audioElements[i].pause();
+      audioElements[i].currentTime = 0;
+    }
+
     flowHandlerRef.current.answers = {};
+    setNavigationHistory([]); // Limpiar historial de navegación
     console.log("Answers reseteadas:", flowHandlerRef.current.answers);
     setApiError(false);
     setApiResponse(null); // Reiniciamos la respuesta de la API
@@ -235,6 +316,33 @@ const ConversationFlow = ({ initialFlow, onReset, deviceType = "desktop" }) => {
     }
   };
 
+  // Función para retroceder al flujo anterior
+  const handleBackNavigation = () => {
+    // Detener cualquier audio que se esté reproduciendo
+    const audioElements = document.getElementsByTagName("audio");
+    for (let i = 0; i < audioElements.length; i++) {
+      audioElements[i].pause();
+      audioElements[i].currentTime = 0;
+    }
+
+    if (navigationHistory.length > 0) {
+      // Obtener el último flujo del historial
+      const previousFlow = navigationHistory[navigationHistory.length - 1];
+
+      // Actualizar el historial quitando el último flujo
+      setNavigationHistory((prev) => prev.slice(0, -1));
+
+      // Navegar al flujo anterior
+      setCurrentFlow(previousFlow);
+
+      console.log("Retrocediendo al flujo anterior:", previousFlow.question);
+    } else {
+      // Si no hay historial, volver al flujo inicial
+      console.log("No hay flujos anteriores, volviendo al inicio");
+      returnToInitialFlow();
+    }
+  };
+
   // Hook para gestionar el timer de inactividad
   useInactivityTimer(INACTIVITY_TIMEOUT, returnToInitialFlow);
 
@@ -243,11 +351,19 @@ const ConversationFlow = ({ initialFlow, onReset, deviceType = "desktop" }) => {
     if (option.key && option.value !== undefined) {
       saveAnswer(option.key, option.value);
     }
+
+    // Guardar el flujo actual en el historial antes de navegar al siguiente
+    if (option.next) {
+      setNavigationHistory((prev) => [...prev, currentFlow]);
+    }
+
     if (option.send) {
-      sendToApi(option.next, option.errorAudio);
+      // En lugar de enviar directamente, mostramos el modal de confirmación
+      showConfirmation(option.next, option.errorAudio);
     } else if (option.next) {
       navigateToFlow(option.next);
     }
+
     if (option.end) {
       console.log("Flujo completado");
       console.log(
@@ -292,6 +408,10 @@ const ConversationFlow = ({ initialFlow, onReset, deviceType = "desktop" }) => {
                 flowHandlerRef.current.answers,
                 serviceResponse
               );
+
+              // Guardar el flujo actual en el historial antes de navegar al siguiente
+              setNavigationHistory((prev) => [...prev, currentFlow]);
+
               if (nextFlow) {
                 navigateToFlow(nextFlow);
               }
@@ -324,8 +444,14 @@ const ConversationFlow = ({ initialFlow, onReset, deviceType = "desktop" }) => {
       saveAnswer("notificacion_celular", inputValue);
     }
 
+    // Guardar el flujo actual en el historial antes de navegar al siguiente
+    if (currentFlow.next) {
+      setNavigationHistory((prev) => [...prev, currentFlow]);
+    }
+
     if (currentFlow.send) {
-      sendToApi(currentFlow.next, currentFlow.errorAudio);
+      // En lugar de enviar directamente, mostramos el modal de confirmación
+      showConfirmation(currentFlow.next, currentFlow.errorAudio);
     } else if (currentFlow.next) {
       if (typeof currentFlow.next === "function") {
         try {
@@ -354,22 +480,26 @@ const ConversationFlow = ({ initialFlow, onReset, deviceType = "desktop" }) => {
     }
   };
 
-  // Agregar clase según el tipo de dispositivo
-  const containerClasses = `container ${deviceType}`;
-  const glassCardClasses = `glass-card ${deviceType}`;
-
   return (
-    <div className={containerClasses}>
+    <div className="container">
       <LoadingModal isVisible={showLoadingModal} />
 
-      <div className={glassCardClasses}>
+      {/* Modal de confirmación */}
+      <ConfirmationModal
+        isOpen={showConfirmationModal}
+        onClose={handleCancelConfirmation}
+        onConfirm={handleConfirmation}
+        data={flowHandlerRef.current.answers}
+        loading={loading}
+      />
+
+      <div className="glass-card">
         {apiError ? (
           <>
             <ErrorMessage
               message={errorMessage}
               onReturn={returnToInitialFlow}
               timeout={ERROR_TIMEOUT}
-              deviceType={deviceType}
             />
             <AudioPlayer audioPath={errorAudio} autoPlay={true} />
           </>
@@ -396,21 +526,22 @@ const ConversationFlow = ({ initialFlow, onReset, deviceType = "desktop" }) => {
               loading={loading}
               error={error}
               setError={setError}
-              deviceType={deviceType}
             />
 
             <OptionsSection
               options={currentFlow?.options || []}
               onOptionSelect={handleOptionSelect}
               loading={loading}
-              deviceType={deviceType}
+              onBack={handleBackNavigation}
+              onHome={returnToInitialFlow}
+              showNavButtons={!currentFlow?.end}
+              apiResponse={apiResponse}
             />
 
             {currentFlow?.end && (
               <ReturnSection
                 timeout={RESET_TIMEOUT}
                 onReturn={returnToInitialFlow}
-                deviceType={deviceType}
               />
             )}
 

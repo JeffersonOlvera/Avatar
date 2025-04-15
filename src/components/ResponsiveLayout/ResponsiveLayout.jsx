@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./ResponsiveLayout.scss";
 
-// ResponsiveLayout wrapper component to handle different screen sizes and orientations
 const ResponsiveLayout = ({ children }) => {
   const [dimensions, setDimensions] = useState({
     width: window.innerWidth,

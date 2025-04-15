@@ -4,49 +4,77 @@ const OptionsSection = ({
   options,
   onOptionSelect,
   loading,
-  deviceType = "desktop",
+  onBack,
+  onHome,
+  showNavButtons = true,
+  apiResponse,
 }) => {
+  // Si hay respuesta de API con turno, no mostramos los botones de navegación
+  // porque en esta pantalla usa el ReturnSection original
+  const hasTurnoResponse =
+    apiResponse && apiResponse.apiResponse && apiResponse.apiResponse.Turno;
+
   if (!options || options.length === 0) {
-    return null;
-  }
-
-  // Clases condicionales según el dispositivo
-  const optionsClasses = `options ${deviceType}`;
-
-  // Determinar clases para botones basado en la cantidad y el dispositivo
-  const getButtonClasses = () => {
-    let classes = "glass-button";
-
-    // Añadir clase según dispositivo
-    if (deviceType) {
-      classes += ` ${deviceType}`;
+    // Si estamos en la pantalla de turno, no mostrar los botones de navegación
+    if (hasTurnoResponse || !showNavButtons) {
+      return null;
     }
 
-    // Añadir clase según la cantidad de botones
-    if (options.length === 1) {
-      classes += " single";
-    } else if (options.length === 2) {
-      classes += " dual";
-    } else if (options.length >= 5) {
-      classes += " many";
-    }
-
-    return classes;
-  };
-
-  return (
-    <div className={optionsClasses}>
-      {options.map((option, index) => (
+    return (
+      <div className="navigation-buttons">
         <button
-          key={index}
-          className={getButtonClasses()}
-          onClick={() => onOptionSelect(option)}
+          className="nav-button back-button"
+          onClick={onBack}
           disabled={loading}
         >
-          {option.label}
+          ← Atrás
         </button>
-      ))}
-    </div>
+        <button
+          className="nav-button home-button"
+          onClick={onHome}
+          disabled={loading}
+        >
+          🏠 Inicio
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="options">
+        {options.map((option, index) => (
+          <button
+            key={index}
+            className="glass-button"
+            onClick={() => onOptionSelect(option)}
+            disabled={loading}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Solo mostrar los botones de navegación si no estamos en la pantalla de turno */}
+      {!hasTurnoResponse && showNavButtons && (
+        <div className="navigation-buttons">
+          <button
+            className="nav-button back-button"
+            onClick={onBack}
+            disabled={loading}
+          >
+            ← Atrás
+          </button>
+          <button
+            className="nav-button home-button"
+            onClick={onHome}
+            disabled={loading}
+          >
+            🏠 Inicio
+          </button>
+        </div>
+      )}
+    </>
   );
 };
 

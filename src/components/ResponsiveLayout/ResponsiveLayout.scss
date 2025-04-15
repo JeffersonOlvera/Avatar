@@ -78,12 +78,12 @@
       justify-content: space-between;
     }
 
-    // Make elements more vertically stacked
-    [data-component="ConsolePage"] {
-      .content-block-experience {
-        flex-direction: column;
-      }
-    }
+    // // Make elements more vertically stacked
+    // [data-component="ConsolePage"] {
+    //   .content-block-experience {
+    //     flex-direction: column;
+    //   }
+    // }
   }
 
   // Landscape mode (width > height)

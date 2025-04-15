@@ -69,7 +69,7 @@ const AdjustableLight = ({
 // Componente para detectar el tipo de dispositivo
 const DeviceDetector = ({ children }) => {
   const { width } = useThree((state) => state.viewport);
-  const isMobile = width < 5; // Ajustar según necesidad (en unidades three.js)
+  const isMobile = width < 5;
   const isTablet = width >= 5 && width < 10;
   const isDesktop = width >= 10;
 

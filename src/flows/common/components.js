@@ -36,7 +36,7 @@ export const components = {
   },
 
   finalMessage: {
-    question: "Su turno se ha generado, por favor revise en la pantalla.",
+    question: "Gracias por utilizar los servicios de Claro",
     audio: "/audio/MEGAN-TURNO.mp3",
     end: true,
   },

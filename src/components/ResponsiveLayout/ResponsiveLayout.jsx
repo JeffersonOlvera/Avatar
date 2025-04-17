@@ -32,12 +32,33 @@ const ResponsiveLayout = ({ children }) => {
       });
     };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    // Initial call to set dimensions
+    handleResize();
+
+    // Add debounced resize listener for better performance
+    let resizeTimer;
+    const debouncedResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(handleResize, 100);
+    };
+
+    window.addEventListener("resize", debouncedResize);
+    return () => {
+      clearTimeout(resizeTimer);
+      window.removeEventListener("resize", debouncedResize);
+    };
   }, []);
 
   const deviceType = getDeviceType();
   const isPortrait = dimensions.height > dimensions.width;
+
+  // Optional: Add debug information during development
+  useEffect(() => {
+    console.log(
+      `Device: ${deviceType}, Mode: ${isPortrait ? "portrait" : "landscape"}`
+    );
+    console.log(`Dimensions: ${dimensions.width}x${dimensions.height}`);
+  }, [deviceType, isPortrait, dimensions]);
 
   return (
     <div

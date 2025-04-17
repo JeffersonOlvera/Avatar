@@ -22,28 +22,25 @@ body {
 }
 
 .container {
-  width: 100%;
-  max-width: 400px;
-  padding: 14px;
-  position: absolute;
-  bottom: 4px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
+  max-width: 500px;
+  margin: 0 auto;
 
-  // Responsive para totem
+  /* Responsive para totem */
   @media (min-width: 1024px) and (min-height: 600px) {
     max-width: 450px;
     bottom: 10px;
   }
 
-  // Responsive para celulares pequeños
+  /* Responsive para celulares pequeños */
   @media (max-width: 320px) {
     max-width: 300px;
     padding: 10px;
   }
 }
-
 .glass-card {
   border-radius: 16px;
   padding: 20px;
@@ -73,7 +70,7 @@ body {
 
     // Responsive para totem
     @media (min-width: 1024px) and (min-height: 600px) {
-      font-size: 1.1rem;
+      //font-size: 1.1rem;
       margin-bottom: 20px;
     }
   }
@@ -135,10 +132,6 @@ body {
         padding: 8px;
         font-size: 14px;
       }
-
-      &:hover {
-        background: $button-hover;
-      }
     }
   }
 
@@ -196,10 +189,6 @@ body {
         min-height: 60px;
         padding: 8px;
         font-size: 0.6rem;
-      }
-
-      &:hover {
-        background: $button-hover;
       }
     }
   }

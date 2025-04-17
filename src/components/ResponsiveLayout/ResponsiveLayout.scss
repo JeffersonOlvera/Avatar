@@ -28,9 +28,10 @@
     }
 
     .start-conversation-button {
-      width: 60%;
+      width: 36vw;
+      height: 12vh;
       max-width: 400px;
-      padding: 20px;
+      padding: 24px;
       font-size: calc(1vw + 1.2vh);
       margin-bottom: 10vh;
     }
@@ -71,6 +72,89 @@
     }
   }
 
+  // Desktop specific styles
+  &.desktop {
+    font-size: calc(0.7vw + 0.7vh);
+
+    .glass-card {
+      width: 80%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 25px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .start-conversation-button {
+      width: 12vw;
+      max-width: 500px;
+      padding: 16px;
+      font-size: 1rem;
+      margin-bottom: 5vh;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      }
+    }
+
+    // Refined options grid for desktop
+    .options {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+
+      button {
+        height: auto;
+        min-height: 10vh;
+        font-size: 1rem;
+        padding: 20px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+        &:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+      }
+    }
+
+    // Refined input fields for desktop
+    .input-group {
+      max-width: 800px;
+      margin: 0 auto;
+
+      input {
+        padding: 14px 18px;
+        font-size: 1rem;
+        height: auto;
+        min-height: 40px;
+        border-radius: 8px;
+      }
+
+      button {
+        padding: 14px 18px;
+        font-size: 1rem;
+        height: auto;
+        min-height: 40px;
+        border-radius: 8px;
+        transition: background-color 0.2s ease;
+      }
+    }
+
+    // Optimize avatar display for desktop
+    [data-component="Experience"] canvas {
+      height: 90vh !important;
+    }
+
+    // Better use of space in desktop layout
+    .container {
+      max-width: 900px;
+      padding: 20px;
+      bottom: 4vh;
+    }
+  }
+
   // Portrait mode (height > width)
   &.portrait {
     // Special adjustments for portrait mode
@@ -102,6 +186,29 @@
       max-width: 50%;
       right: 0;
     }
+
+    // Desktop-specific landscape adjustments
+    &.desktop {
+      .content-wrapper {
+        justify-content: space-between;
+      }
+
+      // Side-by-side layout for better use of horizontal space
+      [data-component="ConsolePage"] {
+        .content-block-experience {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+
+      // Adjust container placement in landscape desktop
+      .container {
+        right: 2vw;
+        bottom: 5vh;
+        max-width: 45%;
+      }
+    }
   }
 
   // Mobile specific adjustments
@@ -109,13 +216,13 @@
     font-size: 16px;
 
     .glass-card {
-      width: 95%;
+      width: 90vw;
       padding: 15px;
     }
 
     .start-conversation-button {
-      width: 80%;
-      padding: 12px;
+      width: 40vw;
+      padding: 24px;
       font-size: 1rem;
       margin-bottom: 8vh;
     }
@@ -161,12 +268,12 @@ body,
 }
 
 .container {
-  position: absolute;
-  bottom: 2vh;
-  width: 100%;
-  max-width: 600px;
-  padding: 10px;
-  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 // Make the 3D scene responsive
@@ -216,6 +323,28 @@ body,
   }
 }
 
+// Desktop-specific modal adjustments
+.desktop .policy-modal-content {
+  max-width: 84vw;
+  border-radius: 12px;
+
+  h2 {
+    font-size: 1.8rem;
+  }
+
+  .policy-text {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .policy-buttons button {
+    padding: 12px 24px;
+    font-size: 1rem;
+    border-radius: 24px;
+    transition: background-color 0.2s ease;
+  }
+}
+
 // Media query for specific kiosk dimensions (616.41 x 1095.84)
 @media (width: 616.41px) and (height: 1095.84px),
   (width: 617px) and (height: 1096px) {
@@ -239,6 +368,48 @@ body,
       font-size: 18px;
       padding: 15px;
       height: 60px;
+    }
+  }
+}
+
+// Large desktop screens
+@media (min-width: 1440px) {
+  .desktop {
+    .glass-card {
+      max-width: 1400px;
+    }
+
+    .options {
+      grid-template-columns: repeat(4, 1fr);
+      max-width: 1400px;
+    }
+
+    .input-group {
+      max-width: 1000px;
+    }
+  }
+}
+
+// Extra large desktop screens
+@media (min-width: 1920px) {
+  .desktop {
+    font-size: 18px;
+
+    .glass-card {
+      max-width: 1800px;
+      padding: 30px;
+    }
+
+    .container {
+      max-width: 1200px;
+    }
+
+    .start-conversation-button {
+      font-size: 1.4rem;
+    }
+
+    .options button {
+      font-size: 1.2rem;
     }
   }
 }

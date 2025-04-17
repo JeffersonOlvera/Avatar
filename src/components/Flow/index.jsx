@@ -9,6 +9,7 @@ import InputSection from "./InputSection";
 import OptionsSection from "./OptionsSection";
 import ReturnSection from "./ReturnSection";
 import ConfirmationModal from "./ConfirmationModal";
+import { Notification, TYPES } from "../Notification/Notification";
 import "./Flow.scss";
 
 // Componente para el modal de carga
@@ -58,6 +59,7 @@ const API_KEY = import.meta.env.VITE_API_KEY;
 const RESET_TIMEOUT = 10000;
 const INACTIVITY_TIMEOUT = 60000;
 const ERROR_TIMEOUT = 5000; // Tiempo antes de volver a la pantalla principal en caso de error
+const NOTIFICATION_DURATION = 5000; // Duración de las notificaciones
 
 const ConversationFlow = ({ initialFlow, onReset }) => {
   // Estados básicos del componente
@@ -81,6 +83,9 @@ const ConversationFlow = ({ initialFlow, onReset }) => {
   // Estado para almacenar la respuesta de la API y su visualización
   const [apiResponse, setApiResponse] = useState(null);
 
+  // Nuevo estado para la notificación
+  const [notification, setNotification] = useState(null);
+
   const [errorAudio, setErrorAudio] = useState("/audio/ERROR_MESSAGE.mp3"); // Audio por defecto para errores
 
   // Referencias
@@ -91,6 +96,22 @@ const ConversationFlow = ({ initialFlow, onReset }) => {
 
   // Hook personalizado para gestionar la navegación entre flujos
   const { navigateToFlow } = useFlowNavigation(flowData, setCurrentFlow);
+
+  // Función para mostrar notificaciones
+  const showNotification = (type, title, message, turnNumber = null) => {
+    setNotification({
+      type,
+      title,
+      message,
+      turnNumber,
+      duration: NOTIFICATION_DURATION,
+    });
+  };
+
+  // Función para cerrar notificaciones
+  const closeNotification = () => {
+    setNotification(null);
+  };
 
   // Efecto para realizar la navegación pendiente después de cargar
   useEffect(() => {
@@ -180,6 +201,10 @@ const ConversationFlow = ({ initialFlow, onReset }) => {
 
       setApiError(true);
       setErrorMessage(errorMsg);
+
+      // Mostrar notificación de error
+      showNotification(TYPES.ERROR, "Error", errorMsg);
+
       throw err;
     } finally {
       setLoading(false);
@@ -260,6 +285,23 @@ const ConversationFlow = ({ initialFlow, onReset }) => {
       // Guardar la respuesta en el estado para mostrarla en la interfaz
       setApiResponse(response);
 
+      // Mostrar notificación de éxito con el número de turno
+      if (response.apiResponse && response.apiResponse.Turno) {
+        const turnoCompleto = `${response.apiResponse.Turno.QCode}${response.apiResponse.Turno.QNumber}`;
+        showNotification(
+          TYPES.SUCCESS,
+          "¡Turno generado con éxito!",
+          "Su turno ha sido generado correctamente",
+          turnoCompleto
+        );
+      } else {
+        showNotification(
+          TYPES.SUCCESS,
+          "¡Operación exitosa!",
+          "Su solicitud ha sido procesada correctamente"
+        );
+      }
+
       // Si la respuesta es exitosa y hay un flujo de éxito definido
       if (successFlowId) {
         setPendingNavigation(successFlowId);
@@ -280,6 +322,9 @@ const ConversationFlow = ({ initialFlow, onReset }) => {
       setApiError(true);
       setErrorMessage(errorMsg);
       setApiResponse(null); // Limpiar respuesta en caso de error
+
+      // Mostrar notificación de error
+      showNotification(TYPES.ERROR, "Error", errorMsg);
 
       // Si se proporciona un audio personalizado para el error, lo usamos
       if (errorCustomAudio) {
@@ -308,6 +353,7 @@ const ConversationFlow = ({ initialFlow, onReset }) => {
     console.log("Answers reseteadas:", flowHandlerRef.current.answers);
     setApiError(false);
     setApiResponse(null); // Reiniciamos la respuesta de la API
+    setNotification(null); // Limpiar notificaciones
     if (onReset) {
       onReset();
     } else {
@@ -401,6 +447,18 @@ const ConversationFlow = ({ initialFlow, onReset }) => {
               metadata.documentType
             );
 
+            // Mostrar notificación de servicios encontrados
+            if (
+              serviceResponse.Services &&
+              serviceResponse.Services.length > 0
+            ) {
+              showNotification(
+                TYPES.INFO,
+                "Servicios encontrados",
+                `Se encontraron ${serviceResponse.Services.length} servicios disponibles`
+              );
+            }
+
             // Si hay una función especial para manejar la respuesta
             if (typeof currentFlow.next === "function") {
               const nextFlow = await currentFlow.next(
@@ -465,6 +523,9 @@ const ConversationFlow = ({ initialFlow, onReset }) => {
           }
         } catch (error) {
           setError("Error al procesar la navegación: " + error.message);
+
+          // Mostrar notificación de error
+          showNotification(TYPES.ERROR, "Error de navegación", error.message);
         }
       } else {
         navigateToFlow(currentFlow.next);
@@ -483,6 +544,18 @@ const ConversationFlow = ({ initialFlow, onReset }) => {
   return (
     <div className="container">
       <LoadingModal isVisible={showLoadingModal} />
+
+      {/* Componente de Notificación */}
+      {notification && (
+        <Notification
+          type={notification.type}
+          title={notification.title}
+          message={notification.message}
+          turnNumber={notification.turnNumber}
+          duration={notification.duration}
+          onClose={closeNotification}
+        />
+      )}
 
       {/* Modal de confirmación */}
       <ConfirmationModal
@@ -508,17 +581,6 @@ const ConversationFlow = ({ initialFlow, onReset }) => {
             <h3 className="question">
               {currentFlow?.question || "Cargando..."}
             </h3>
-            {/* Mostrar la respuesta de la API si existe */}
-            {apiResponse &&
-              apiResponse.apiResponse &&
-              apiResponse.apiResponse.Turno && (
-                <div className="turno">
-                  <strong className="turno-box">
-                    Turno:{" "}
-                    {`${apiResponse.apiResponse.Turno.QCode}${apiResponse.apiResponse.Turno.QNumber}`}
-                  </strong>
-                </div>
-              )}
 
             <InputSection
               currentFlow={currentFlow}

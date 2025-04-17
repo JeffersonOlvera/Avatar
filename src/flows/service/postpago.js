@@ -179,8 +179,7 @@ export const postpaidFlow = {
               question: "Por favor, digita el número de linea a modificar",
               ...createNodeWithComponent("phoneNumberInput"),
               next: {
-                question:
-                  "Su turno se ha generado, por favor revise en la pantalla",
+                question: "Gracias por utilizar los servicios de Claro",
                 end: true,
               },
             },

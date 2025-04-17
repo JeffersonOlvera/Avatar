@@ -1,0 +1,128 @@
+$success-color: #16a34a;
+$error-color: #dc2626;
+$info-color: #2563eb;
+$text-dark: #1f2937;
+$text-light: #6b7280;
+$white: #ffffff;
+
+@mixin drop-shadow {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+@mixin transition {
+  transition: all 0.3s ease-in-out;
+}
+
+.notification {
+  width: 320px;
+  border-radius: 8px;
+  overflow: hidden;
+  @include drop-shadow;
+  @include transition;
+
+  &--success {
+    .notification__icon-wrapper {
+      background-color: $success-color;
+    }
+
+    .notification__footer {
+      background-color: $success-color;
+    }
+  }
+
+  &--error {
+    .notification__icon-wrapper {
+      background-color: $error-color;
+    }
+
+    .notification__footer {
+      background-color: $error-color;
+    }
+  }
+
+  &--info {
+    .notification__icon-wrapper {
+      background-color: $info-color;
+    }
+
+    .notification__footer {
+      background-color: $info-color;
+    }
+  }
+
+  // PArte superiror
+  &__header {
+    background-color: $white;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &__icon-wrapper {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  &-icon {
+    width: 32px;
+    height: 32px;
+    color: $white;
+  }
+
+  &__content {
+    text-align: center;
+  }
+
+  &__title {
+    font-size: 18px;
+    font-weight: 500;
+    color: $text-dark;
+    margin: 0 0 4px 0;
+  }
+
+  &__message {
+    font-size: 14px;
+    color: $text-light;
+    margin: 0;
+  }
+
+  // PArte infierior
+  &__footer {
+    padding: 16px;
+    color: $white;
+  }
+
+  &__turn {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  &__progress-container {
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 4px;
+  }
+
+  &__progress-bar {
+    height: 100%;
+    background-color: $white;
+    @include transition;
+  }
+
+  &__timer {
+    text-align: right;
+    font-size: 12px;
+    opacity: 0.7;
+  }
+}

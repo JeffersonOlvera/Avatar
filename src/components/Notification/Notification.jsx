@@ -1,8 +1,11 @@
+// En src/components/Notification/Notification.jsx
+// Modificar el componente Notification para que el mensaje de agradecimiento se muestre correctamente
+
 import React, { useState, useEffect } from "react";
 import { CheckCircle, XCircle, Info } from "lucide-react";
 import "./Notification.scss";
 
-// Tipos de notificacon
+// Tipos de notificación
 const TYPES = {
   SUCCESS: "success",
   ERROR: "error",
@@ -53,20 +56,33 @@ const Notification = ({
 
   const percentLeft = (timeLeft / duration) * 100;
 
+  // Dividir el mensaje en caso de tener el texto de agradecimiento
+  const hasThankYouMessage =
+    message && message.includes("Gracias por utilizar los servicios de Claro");
+  const mainMessage = hasThankYouMessage
+    ? message.split("Gracias por utilizar los servicios de Claro")[0].trim()
+    : message;
+  const thankYouMessage = hasThankYouMessage
+    ? "Gracias por utilizar los servicios de Claro"
+    : "";
+
   return (
     <div className={`notification notification--${type}`}>
-      {/* Sup */}
+      {/* Header */}
       <div className="notification__header">
         <div className="notification__icon-wrapper">{getIcon(type)}</div>
         <div className="notification__content">
           <h3 className="notification__title">
             {title || "¡Su turno se ha generado exitosamente!"}
           </h3>
-          <p className="notification__message">{message}</p>
+          <p className="notification__message">{mainMessage}</p>
+          {hasThankYouMessage && (
+            <p className="notification__thanks">{thankYouMessage}</p>
+          )}
         </div>
       </div>
 
-      {/* Inf */}
+      {/* Footer */}
       <div className="notification__footer">
         {turnNumber && (
           <div className="notification__turn">Su turno es: {turnNumber}</div>

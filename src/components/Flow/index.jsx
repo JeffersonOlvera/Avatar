@@ -294,6 +294,12 @@ const ConversationFlow = ({ initialFlow, onReset }) => {
           "Su turno ha sido generado correctamente",
           turnoCompleto
         );
+
+        // Al generar un turno exitosamente, cambiamos la pregunta del flujo actual para que coincida
+        // con el mensaje de agradecimiento (por si acaso la tarjeta se muestra en algún momento)
+        if (currentFlow) {
+          currentFlow.question = "Gracias por utilizar los servicios de Claro";
+        }
       } else {
         showNotification(
           TYPES.SUCCESS,
@@ -565,57 +571,60 @@ const ConversationFlow = ({ initialFlow, onReset }) => {
         data={flowHandlerRef.current.answers}
         loading={loading}
       />
-
-      <div className="glass-card">
-        {apiError ? (
-          <>
-            <ErrorMessage
-              message={errorMessage}
-              onReturn={returnToInitialFlow}
-              timeout={ERROR_TIMEOUT}
-            />
-            <AudioPlayer audioPath={errorAudio} autoPlay={true} />
-          </>
-        ) : (
-          <>
-            <h3 className="question">
-              {currentFlow?.question || "Cargando..."}
-            </h3>
-
-            <InputSection
-              currentFlow={currentFlow}
-              onSubmit={handleInputSubmit}
-              loading={loading}
-              error={error}
-              setError={setError}
-            />
-
-            <OptionsSection
-              options={currentFlow?.options || []}
-              onOptionSelect={handleOptionSelect}
-              loading={loading}
-              onBack={handleBackNavigation}
-              onHome={returnToInitialFlow}
-              showNavButtons={!currentFlow?.end}
-              apiResponse={apiResponse}
-            />
-
-            {currentFlow?.end && (
-              <ReturnSection
-                timeout={RESET_TIMEOUT}
+      {notification &&
+      notification.type === TYPES.SUCCESS &&
+      notification.turnNumber ? null : ( // No mostrar la tarjeta glass-card si hay una notificación de turno exitosa
+        <div className="glass-card">
+          {apiError ? (
+            <>
+              <ErrorMessage
+                message={errorMessage}
                 onReturn={returnToInitialFlow}
+                timeout={ERROR_TIMEOUT}
               />
-            )}
+              <AudioPlayer audioPath={errorAudio} autoPlay={true} />
+            </>
+          ) : (
+            <>
+              <h3 className="question">
+                {currentFlow?.question || "Cargando..."}
+              </h3>
 
-            {loading && !showLoadingModal && (
-              <p className="loading">Cargando...</p>
-            )}
-            {error && <p className="error">{error}</p>}
+              <InputSection
+                currentFlow={currentFlow}
+                onSubmit={handleInputSubmit}
+                loading={loading}
+                error={error}
+                setError={setError}
+              />
 
-            <AudioPlayer audioPath={currentFlow?.audio} />
-          </>
-        )}
-      </div>
+              <OptionsSection
+                options={currentFlow?.options || []}
+                onOptionSelect={handleOptionSelect}
+                loading={loading}
+                onBack={handleBackNavigation}
+                onHome={returnToInitialFlow}
+                showNavButtons={!currentFlow?.end}
+                apiResponse={apiResponse}
+              />
+
+              {currentFlow?.end && (
+                <ReturnSection
+                  timeout={RESET_TIMEOUT}
+                  onReturn={returnToInitialFlow}
+                />
+              )}
+
+              {loading && !showLoadingModal && (
+                <p className="loading">Cargando...</p>
+              )}
+              {error && <p className="error">{error}</p>}
+
+              <AudioPlayer audioPath={currentFlow?.audio} />
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 };
